@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "removeComments": true,
+        "esModuleInterop": true,
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "listEmittedFiles": true,
+        "module": "commonjs"
+    },
+    "include": [
+        "/src/**/*.ts",
+        "custom_types/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**.d.ts"
+    ],
+    "files": [
+        "src/index.ts"
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "JsTs-Lib-Starter",
+    "npmname": "btgrid",
+    "umdname": "btgrid",
+    "username": "ASheng",
+    "type": "ts",
+    "module": "umd,esm,commonjs",
+    "test": "mocha",
+    "lang": "zh",
+    "version": "1.6.0"
+}

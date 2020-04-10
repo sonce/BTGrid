@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "All Tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "--require",
+                "ts-node/register",
+                "--require",
+                "jsdom-global",
+                "--require",
+                "source-map-support/register",
+                "-u",
+                "bdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "--recursive",
+                "${workspaceFolder}/test/**/*.ts"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Current Tests File",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "--require",
+                "ts-node/register",
+                "--require",
+                "jsdom-global",
+                "--require",
+                "source-map-support/register",
+                "-u",
+                "bdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "--recursive",
+                "${relativeFile}"
+            ],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
+        }
+    ]
+}

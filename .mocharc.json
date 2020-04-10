@@ -1,0 +1,23 @@
+{
+    "diff": true,
+    "extension": [
+        "ts","js"
+    ],
+    "require": [
+        "ts-node/register",
+        "jsdom-global/register",
+        "source-map-support/register"
+    ],
+    "package": "./package.json",
+    "reporter": "spec",
+    "slow": 75,
+    "timeout": 2000,
+    "ui": "bdd",
+    "watch-files": [
+        "test/**/*.spec.ts",
+        "test/**/*.spec.js"
+    ],
+    "watch-ignore": [
+        "lib/vendor"
+    ]
+}
