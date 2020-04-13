@@ -1,4 +1,5 @@
-import expect from 'expect.js';
+import chai from 'chai';
+var expect = chai.expect;
 import '../src/util';
 import setupTestHelpers from './baseTest';
 

@@ -1,4 +1,5 @@
-import expect from 'expect.js'
+import chai from 'chai';
+var expect = chai.expect;
 import BTGrid from '../../src'
 import setupTestHelpers from '../baseTest';
 import cellSizeMode from '../../src/cellSizeMode';

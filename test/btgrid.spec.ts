@@ -1,4 +1,5 @@
-import expect from 'expect.js'
+import chai from 'chai';
+var expect = chai.expect;
 import BTGrid from '../src'
 import setupTestHelpers from './baseTest';
 import cellSizeMode from '../src/cellSizeMode';
@@ -34,8 +35,7 @@ describe("BTGrid.ts", () => {
             expect(btGrid.rowCount).to.equal(3);
             expect(newCell1.textContent).to.equal('1');
             // expect(newCell1.classList.contains(btGrid.FullSizeCellClass)).to.ok();
-            expect(newCell1.firstElementChild.classList.contains(btGrid.option.colItemClass)).to.ok();
-
+            expect(newCell1.firstElementChild.classList.contains(btGrid.option.colItemClass)).to.be.true;
             let contentEl2 = this.createElement('div', '2', null, true);
             btGrid.addWidget(contentEl2, -1);
             let newCell2 = btGrid.getRow(0);
@@ -52,7 +52,7 @@ describe("BTGrid.ts", () => {
             expect(btGrid.rowCount).to.equal(2);
             expect(btGrid.getRow(1).textContent).to.equal('2');
             // expect(btGrid.getRow(1).firstElementChild.classList.contains(btGrid.FullSizeCellClass)).to.ok();
-            expect(btGrid.getRow(1).firstElementChild.firstElementChild.classList.contains(btGrid.option.colItemClass)).to.ok();
+            expect(btGrid.getRow(1).firstElementChild.firstElementChild.classList.contains(btGrid.option.colItemClass)).to.be.true;
         })
 
         it('新增WIDGET-新增列到指定位置', function () {
