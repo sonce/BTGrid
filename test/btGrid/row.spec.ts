@@ -1,7 +1,6 @@
 import expect from 'expect.js'
 import BTGrid from '../../src'
 import setupTestHelpers from '../baseTest';
-import _ from 'lodash';
 import cellSizeMode from '../../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {
@@ -67,6 +66,23 @@ describe("BTGrid.ts", () => {
             let btGrid = BTGrid.createFrom(grid);
             expect(btGrid.getRow(0)).not.equal(undefined);
             expect(btGrid.getRow(2)).equal(undefined);
+        })
+        it('删除行', function () {
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-2">列0</div>
+                <div class="col-lg-3">列1</div>
+            </div>
+            <div class="row">
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+
+            btGrid.removeRow(1);
+            expect(btGrid.rowCount).to.equal(1);
+            btGrid.removeRow(0);
+            expect(btGrid.getRowsCount()).to.equal(0);
         })
     })
 })

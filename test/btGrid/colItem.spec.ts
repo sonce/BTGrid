@@ -1,7 +1,6 @@
 import expect from 'expect.js'
 import BTGrid from '../../src'
 import setupTestHelpers from '../baseTest';
-import _ from 'lodash';
 import cellSizeMode from '../../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {
@@ -68,5 +67,90 @@ describe("BTGrid.ts", () => {
             btGrid.addColItem(newContent, 0, 0, 1);
             expect(cell.children[1].textContent).to.equal('1');
         })
+
+        it('删除ColItem', function () {
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="colitem">
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="colitem">
+                    </div>
+                    <div class="colitem">
+                    </div>
+                </div>
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid, { CellSizeMode: cellSizeMode.AutoAverageShrink });
+
+            let row1 = btGrid.getRow(0);
+            //只有一个项
+            let cell = btGrid.getCellByIndex(row1, 0);
+            btGrid.removeColItem(cell.firstElementChild);
+            expect(row1.childElementCount).to.equal(1);
+
+            //有多个项
+            cell = btGrid.getCellByIndex(row1, 0);
+            btGrid.removeColItem(cell.firstElementChild);
+            expect(row1.childElementCount).to.equal(1);
+            expect(cell.childElementCount).to.equal(1);
+        })
+
+        // it('移动', function () {
+
+        //     this.cleanupTest();
+
+        //     let gridContent = `
+        //     <div class="row">
+        //         <div class="col-lg-3" style="width:100px;height:100px;">
+        //             <div class="colitem" style="width:100px;height:100px;">
+        //             a
+        //             </div>
+        //         </div>
+        //         <div class="col-lg-3" style="width:100px;height:100px;">
+        //             <div class="colitem" style="width:100px;height:100px;">
+        //             b
+        //             </div>
+        //             <div class="colitem" style="width:100px;height:100px;">
+        //             c
+        //             </div>
+        //         </div>
+        //     </div>
+        //     <div class="row">
+        //         <div class="col-lg-6">
+        //             <div class="colitem">
+        //             d
+        //             </div>
+        //         </div>
+        //         <div class="col-lg-6">
+        //             <div class="colitem">
+        //             e
+        //             </div>
+        //         </div>
+        //     </div>
+        //     `
+        //     let grid = this.createElement('div', gridContent, 'grid');
+        //     let btGrid = BTGrid.createFrom(grid);
+
+        //     let colitem = btGrid.getCellByIndex(0, 1).lastElementChild as HTMLElement;
+        //     Object.assign(colitem.style, {
+        //         width: "100px",
+        //         height: "100px",
+        //       })
+
+        //     let target = btGrid.getCellByIndex(0, 0).lastElementChild as HTMLElement;
+        //     Object.assign(target.style, {
+        //         width: "100px",
+        //         height: "100px",
+        //       })
+
+        //     let targetRec = target.getBoundingClientRect();
+        //     let x = targetRec.left;
+        //     let y = targetRec.top;
+        //     btGrid.move(colitem, x, y);
+        // })
     })
 })

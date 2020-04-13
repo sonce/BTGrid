@@ -1,7 +1,6 @@
 import expect from 'expect.js'
 import BTGrid from '../../src'
 import setupTestHelpers from '../baseTest';
-import _ from 'lodash';
 import cellSizeMode from '../../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {
@@ -81,7 +80,7 @@ describe("BTGrid.ts", () => {
 
             row = btGrid.getRow(1);
             cell = btGrid.getCellByIndex(row, 0);
-            expect(_.isNil(cell)).to.ok();
+            expect(Object.isNull(cell)).to.ok();
         })
 
         it('添加新列-None', function () {
@@ -116,7 +115,7 @@ describe("BTGrid.ts", () => {
             //不能插入，宽度已经达到最大值12
             let newContent22 = this.createElement('div', '2-2', '', true);
             cell = btGrid.addNewCel(newContent22, noCellRow2, 1, 13);
-            expect(_.isNil(cell)).to.ok();
+            expect(Object.isNull(cell)).to.ok();
 
 
             //存在列，计算剩余大小
@@ -172,25 +171,25 @@ describe("BTGrid.ts", () => {
 
             //大小12，插入大小2，需收缩2
             let newCell = btGrid.addNewCel(content, 0, 1, 2);
-            expect(!_.isNil(newCell)).to.ok();
+            expect(!Object.isNull(newCell)).to.ok();
             let thirdCell = btGrid.getCellByIndex(0, 2);
             expect(btGrid.getCellSize(thirdCell)).to.equal(4);
 
             //大小10，插入大小2，无需收缩
             newCell = btGrid.addNewCel(content, 1, 1, 2);
-            expect(!_.isNil(newCell)).to.ok();
+            expect(!Object.isNull(newCell)).to.ok();
             thirdCell = btGrid.getCellByIndex(1, 2);
             expect(btGrid.getCellSize(thirdCell)).to.equal(4);
 
             //大小11，插入大小2，需收缩1
             newCell = btGrid.addNewCel(content, 2, 1, 2);
-            expect(!_.isNil(newCell)).to.ok();
+            expect(!Object.isNull(newCell)).to.ok();
             thirdCell = btGrid.getCellByIndex(2, 2);
             expect(btGrid.getCellSize(thirdCell)).to.equal(4);
 
             //大小12，共4列，插入大小9,自身收缩到8，其余收缩到1
             newCell = btGrid.addNewCel(content, 3, 2, 9);
-            expect(!_.isNil(newCell)).to.ok();
+            expect(!Object.isNull(newCell)).to.ok();
             let Cell1 = btGrid.getCellByIndex(3, 0);
             let Cell2 = btGrid.getCellByIndex(3, 1);
             let Cell3 = btGrid.getCellByIndex(3, 2);
@@ -204,7 +203,7 @@ describe("BTGrid.ts", () => {
 
             //无法插入
             newCell = btGrid.addNewCel(content, 4, 1, 2);
-            expect(_.isNil(newCell)).to.ok();
+            expect(Object.isNull(newCell)).to.ok();
         })
 
         it('添加列-AutoAverageThrink', function () {
@@ -240,6 +239,28 @@ describe("BTGrid.ts", () => {
                 expect(btGrid.getCellSize(theCel)).to.equal(2);
             });
             expect(btGrid.getCellSize(newCel)).to.equal(6);
+        })
+
+        it('删除列',function(){
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-2">列0</div>
+                <div class="col-lg-3">列1</div>
+            </div>
+            `
+            
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+
+            let row = btGrid.getRow(0);
+            let cell = btGrid.getCellByIndex(row,0);
+
+            btGrid.removeCel(cell);
+            expect(row.childElementCount).to.equal(1);
+            cell = btGrid.getCellByIndex(row,0);
+            btGrid.removeCel(cell);
+            expect(row.childElementCount).to.equal(0);
+            expect(btGrid.rowCount).to.equal(0);
         })
     })
 })

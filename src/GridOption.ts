@@ -13,4 +13,8 @@ export default class GridOption {
      * ColItem样式
      */
     colItemClass?= 'colitem';
+    /**
+     * 移动时的样式
+     */
+    movingClass?: string='btui-draggable-moving';
 }

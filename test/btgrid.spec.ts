@@ -1,7 +1,6 @@
 import expect from 'expect.js'
 import BTGrid from '../src'
 import setupTestHelpers from './baseTest';
-import _ from 'lodash';
 import cellSizeMode from '../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {

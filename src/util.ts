@@ -18,6 +18,20 @@ interface String {
 
     format(...args: string[]): string;
 }
+interface StringConstructor {
+    /**
+     * 字符串是否为null或者空字符
+     * @param val 字符串
+     */
+    isNullOrEmpty(val: string): boolean;
+}
+interface ObjectConstructor {
+    /**
+     * 对象是否为null
+     * @param val 对象
+     */
+    isNull(val: object | number | string): boolean;
+}
 interface Element {
     /**
      * 在refChild元素之后插入新元素
@@ -27,11 +41,18 @@ interface Element {
     insertAfter<T extends Element>(newChild: T, refChild?: Node): T;
 }
 
-
 String.prototype.format = function (...args: string[]): string {
     return this.replace(/{(\d+)}/g, function (match: string, number: number) {
         return typeof args[number] != 'undefined' ? args[number] : match;
     });
+};
+
+String.isNullOrEmpty = function (value: string): boolean {
+    return !(typeof value === 'string' && value.length > 0);
+};
+
+Object.isNull = function (value: object | number | string): boolean {
+    return typeof value === 'undefined' || value == null;
 };
 
 Element.prototype.insertAfter = function <T extends Element>(newChild: T, refChild: Element): T {
