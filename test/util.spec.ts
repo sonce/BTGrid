@@ -1,7 +1,6 @@
-import chai from 'chai';
-var expect = chai.expect;
+import { expect } from 'chai';
 import '../src/util';
-import setupTestHelpers from './baseTest';
+import setupTestHelpers from './baseTest.spec';
 
 describe("Util", () => {
     'use strict';

@@ -1,7 +1,6 @@
-import chai from 'chai';
-var expect = chai.expect;
+import { expect } from 'chai';
 import BTGrid from '../../src'
-import setupTestHelpers from '../baseTest';
+import setupTestHelpers from '../baseTest.spec';
 import cellSizeMode from '../../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {

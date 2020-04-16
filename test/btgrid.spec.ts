@@ -1,7 +1,6 @@
-import chai from 'chai';
-var expect = chai.expect;
+import { expect } from 'chai';
 import BTGrid from '../src'
-import setupTestHelpers from './baseTest';
+import setupTestHelpers from './baseTest.spec';
 import cellSizeMode from '../src/cellSizeMode';
 
 describe("BTGrid.ts", () => {
@@ -122,14 +121,14 @@ describe("BTGrid.ts", () => {
             expect(BTGrid.createFrom(null)).to.equal(null);
         })
 
-        it('选择器初始化-不存在', function () {
-            expect(BTGrid.createFrom("#abc").length).to.equal(0);
-        })
+        // it('选择器初始化-不存在', function () {
+        //     expect(BTGrid.createFrom("#abc").length).to.equal(0);
+        // })
 
-        it('选择器初始化-存在', function () {
-            this.createElement("div", null, "grid1")
-            expect(BTGrid.createFrom(".grid1").length).to.equal(1);
-        })
+        // it('选择器初始化-存在', function () {
+        //     this.createElement("div", null, "grid1")
+        //     expect(BTGrid.createFrom(".grid1").length).to.equal(1);
+        // })
 
         it('元素初始化', function () {
             let target = this.createElement("div", null, "grid");

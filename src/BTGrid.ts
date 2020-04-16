@@ -741,7 +741,7 @@ export default class BTGrid {
      * @param selector 选择器
      * @param option 配置
      */
-    static createFrom(selector: string, option?: GridOption): BTGrid[];
+    static createFrom(selector: string, option?: GridOption): BTGrid;
 
     /**
      * 创建BTGrid
@@ -752,19 +752,12 @@ export default class BTGrid {
     static createFrom(elementOrSelector: HTMLElement | string, option?: GridOption): BTGrid[] | BTGrid {
         if (Object.isNull(elementOrSelector))
             return null;
-        let targets: HTMLElement[] = [];
+        let targets: HTMLElement;
         if (typeof elementOrSelector == 'string')
-            targets = Array.from(document.querySelectorAll(elementOrSelector));
+            targets = document.querySelector(elementOrSelector);
         else
-            targets.push(elementOrSelector);
-
-        const instances: BTGrid[] = [];
-        targets.forEach(element => {
-            instances.push(new BTGrid(element, option));
-        });
-        if (typeof elementOrSelector == 'string')
-            return instances;
-        else
-            return instances[0];
+            targets = elementOrSelector;
+        const instances: BTGrid = new BTGrid(targets, option);
+        return instances;
     }
 }

@@ -4,5 +4,12 @@ node_js:
   - "10"
   - "8"
   - "6"
+before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+addons:
+  firefox: latest
+  chrome: stable
 after_success:
-  - npm run coveralls
+  - npm run build
+  - npm run test1
