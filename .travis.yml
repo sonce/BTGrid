@@ -6,3 +6,5 @@ services:
 addons:
   firefox: latest
   chrome: stable
+env:
+  - CI=true
