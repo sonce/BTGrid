@@ -1,7 +1,7 @@
 # [BTGrid](https://github.com/sonce/BTGrid)
 [![](https://img.shields.io/badge/Powered%20by-btgrid%20base-brightgreen.svg)](https://github.com/sonce/btgrid)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sonce/BTGrid/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/sonce/BTGrid.svg?branch=master)](https://travis-ci.org/sonce/BTGrid)
+[![Build Status](https://travis-ci.com/sonce/BTGrid.svg?branch=master)](https://travis-ci.com/sonce/BTGrid)
 [![Coveralls](https://img.shields.io/coveralls/sonce/BTGrid.svg)](https://coveralls.io/github/sonce/BTGrid)
 [![npm](https://img.shields.io/badge/npm-0.1.0-orange.svg)](https://www.npmjs.com/package/btgrid)
 [![NPM downloads](http://img.shields.io/npm/dm/BTGrid.svg?style=flat-square)](http://www.npmtrends.com/btgrid)

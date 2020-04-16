@@ -6,5 +6,3 @@ services:
 addons:
   firefox: latest
   chrome: stable
-after_success:
-  - npm run build

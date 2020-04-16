@@ -8,10 +8,9 @@
   "srctype": "ts",
   "sideEffects": false,
   "scripts": {
-    "test1": "karma start karma.conf.js",
+    "test": "npm run lint && karma start karma.conf.js",
     "rename": "node rename.js",
     "clean": "rimraf ./dist",
-    "test": "npm run lint && nyc mocha \"test/**/*.spec.ts\"",
     "release": "npm test && npm run build && cross-var git commit -am $npm_package_version && cross-var git tag $npm_package_version && git push && git push --tags",
     "lint": "eslint -c .eslintrc.ts.js \"src/**/*.ts\"",
     "lint:fix": "eslint --fix -c .eslintrc.ts.js \"src/**/*.ts\" --fix",
