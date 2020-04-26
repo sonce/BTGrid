@@ -39,6 +39,11 @@ interface Element {
      * @param refChild 在这个元素之后位置插入
      */
     insertAfter<T extends Element>(newChild: T, refChild?: Node): T;
+    /**
+     * 判断元素是否符合该选择器
+     * @param selector 选择器
+     */
+    is(selector: string): boolean;
 }
 
 String.prototype.format = function (...args: string[]): string {
@@ -68,6 +73,42 @@ Element.prototype.insertAfter = function <T extends Element>(newChild: T, refChi
         parentEl.insertBefore(newChild, refChild.nextSibling);
     }
     return newChild;
+};
+
+Element.prototype.is = function (this: Element, selector: string): boolean {
+    if (this.matches)
+        return this.matches(selector);
+
+    let result = false;
+    let root, frag;
+
+    // crawl up the tree
+    // while (node.parentElement) {
+    //     node = node.parentElement;
+    // }
+
+    // root must be either a Document or a DocumentFragment
+    if (this.parentElement) {
+        root = this.parentElement;
+    } else {
+        root = frag = document.createDocumentFragment();
+        frag.appendChild(this);
+    }
+
+    // see if selector matches
+    const matches = root.querySelectorAll(selector);
+    for (let i = 0; i < matches.length; i++) {
+        if (this === matches.item(i)) {
+            result = true;
+            break;
+        }
+    }
+
+    // detach from DocumentFragment and return result
+    while (frag && frag.firstChild) {
+        frag.removeChild(frag.firstChild);
+    }
+    return result;
 };
 
 //去除字符串头尾空格或指定字符  

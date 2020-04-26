@@ -99,58 +99,144 @@ describe("BTGrid.ts", () => {
             expect(cell.childElementCount).to.equal(1);
         })
 
-        // it('移动', function () {
+        it('移动', function () {
 
-        //     this.cleanupTest();
+            this.cleanupTest();
 
-        //     let gridContent = `
-        //     <div class="row">
-        //         <div class="col-lg-3" style="width:100px;height:100px;">
-        //             <div class="colitem" style="width:100px;height:100px;">
-        //             a
-        //             </div>
-        //         </div>
-        //         <div class="col-lg-3" style="width:100px;height:100px;">
-        //             <div class="colitem" style="width:100px;height:100px;">
-        //             b
-        //             </div>
-        //             <div class="colitem" style="width:100px;height:100px;">
-        //             c
-        //             </div>
-        //         </div>
-        //     </div>
-        //     <div class="row">
-        //         <div class="col-lg-6">
-        //             <div class="colitem">
-        //             d
-        //             </div>
-        //         </div>
-        //         <div class="col-lg-6">
-        //             <div class="colitem">
-        //             e
-        //             </div>
-        //         </div>
-        //     </div>
-        //     `
-        //     let grid = this.createElement('div', gridContent, 'grid');
-        //     let btGrid = BTGrid.createFrom(grid);
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="colitem">Me</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="colitem">上下插入</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="colitem">左右插入</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+                <div class="col-lg-1"><div class="colitem">CELLSIZE</div></div>
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
 
-        //     let colitem = btGrid.getCellByIndex(0, 1).lastElementChild as HTMLElement;
-        //     Object.assign(colitem.style, {
-        //         width: "100px",
-        //         height: "100px",
-        //       })
+            let colitem = btGrid.getCellByIndex(0, 0).lastElementChild as HTMLElement;
+            let row1 = btGrid.getRow(1);
+            let row2 = btGrid.getRow(2);
+            let row3 = btGrid.getRow(3);
 
-        //     let target = btGrid.getCellByIndex(0, 0).lastElementChild as HTMLElement;
-        //     Object.assign(target.style, {
-        //         width: "100px",
-        //         height: "100px",
-        //       })
+            //自身，不允许
+            let roMe = colitem.getBoundingClientRect();
+            var Top = roMe.top;
+            var Bottom = roMe.bottom;
+            var Left = roMe.left;
+            var Right = roMe.right;
+            var Width = roMe.width || Right - Left;
+            var Height = roMe.height || Bottom - Top;
+            expect(btGrid.move(colitem, Left + 2, Top + Height / 2)).to.be.false;
 
-        //     let targetRec = target.getBoundingClientRect();
-        //     let x = targetRec.left;
-        //     let y = targetRec.top;
-        //     btGrid.move(colitem, x, y);
-        // })
+            //上下插入
+            let target = btGrid.getCellByIndex(row1, 0).lastElementChild as HTMLElement;
+
+            //上
+            let ro = target.getBoundingClientRect();
+            Top = ro.top;
+            Bottom = ro.bottom;
+            Left = ro.left;
+            Right = ro.right;
+            Width = ro.width || Right - Left;
+            Height = ro.height || Bottom - Top;
+            expect(btGrid.move(colitem, Left + Width * 0.2 + 1, Top + 1, true)).to.be.true;
+            expect(target.previousElementSibling).to.equal(colitem);
+            expect(btGrid.rowCount).to.equal(3);
+            //下
+            ro = target.getBoundingClientRect();
+            Top = ro.top;
+            Bottom = ro.bottom;
+            Left = ro.left;
+            Right = ro.right;
+            Width = ro.width || Right - Left;
+            Height = ro.height || Bottom - Top;
+            expect(btGrid.move(colitem, Left + Width * 0.2 + 1, Bottom - 1, true)).to.be.true;
+            expect(target.nextElementSibling).to.equal(colitem);
+            expect(btGrid.rowCount).to.equal(3);
+
+            //左右新列插入
+            target = btGrid.getCellByIndex(row2, 0).lastElementChild as HTMLElement;
+
+            //左边
+            btGrid.option.CellSizeMode = cellSizeMode.None;
+            ro = target.getBoundingClientRect();
+            Top = ro.top;
+            Bottom = ro.bottom;
+            Left = ro.left;
+            Right = ro.right;
+            Width = ro.width || Right - Left;
+            Height = ro.height || Bottom - Top;
+            expect(btGrid.move(colitem, Left + 1, Top + 1, true)).to.be.true;
+            expect(btGrid.getCells(row2).length).to.equal(2);
+            expect(btGrid.getCellByIndex(row2, 0).textContent).to.equal('Me');
+            //右边
+            ro = target.getBoundingClientRect();
+            Top = ro.top;
+            Bottom = ro.bottom;
+            Left = ro.left;
+            Right = ro.right;
+            Width = ro.width || Right - Left;
+            Height = ro.height || Bottom - Top;
+            expect(btGrid.move(colitem, Right - 1, Top + 1,false)).to.be.true;
+            expect(btGrid.move(colitem, Right - 1, Top + 1, true)).to.be.true;
+            expect(btGrid.getCells(row2).length).to.equal(2);
+            expect(btGrid.getCellByIndex(row2, 1).textContent).to.equal('Me');
+
+            //三种列大小模式的处理
+            btGrid.option.CellSizeMode = cellSizeMode.None;
+            target = btGrid.getCellByIndex(row3, 0).lastElementChild as HTMLElement;
+            ro = target.getBoundingClientRect();
+            Top = ro.top;
+            Bottom = ro.bottom;
+            Left = ro.left;
+            Right = ro.right;
+            Width = ro.width || Right - Left;
+            Height = ro.height || Bottom - Top;
+            expect(btGrid.move(colitem, Left + 1, Top + 1, true)).to.be.false;
+        })
+
+        it('调整大小', function () {
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="colitem">a</div>
+                </div>
+            </div>
+            `
+
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+            let colitem = btGrid.getCellByIndex(0, 0).lastElementChild;
+            btGrid.resizeColItem(colitem, 200);
+            let roMe = colitem.getBoundingClientRect();
+            var Top = roMe.top;
+            var Bottom = roMe.bottom;
+            var Height = roMe.height || Bottom - Top;
+            expect(Height).to.be.equal(200);
+        })
     })
 })

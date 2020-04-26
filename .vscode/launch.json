@@ -4,7 +4,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "All Tests",
+            "name": "[Mocha]All Tests",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [
                 "--require",
@@ -27,7 +27,7 @@
             ]
         },
         {
-            "name": "Current Tests File",
+            "name": "[Mocha]Current Tests File",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
@@ -48,6 +48,21 @@
             ],
             "cwd": "${workspaceRoot}",
             "protocol": "inspector"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach Karma Chrome",
+            "address": "localhost",
+            "port": 9333,
+            "timeout": 60000,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "npm: test",
+            "pathMapping": {
+                "/": "${workspaceRoot}",
+                "/base/": "${workspaceRoot}/"
+            }
         }
     ]
 }

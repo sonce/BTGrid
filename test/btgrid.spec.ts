@@ -118,17 +118,18 @@ describe("BTGrid.ts", () => {
 
     describe('初始化', function () {
         it('选择器初始化-参数为null', function () {
-            expect(BTGrid.createFrom(null)).to.equal(null);
+            expect(Object.isNull(BTGrid.createFrom(null))).to.ok;
         })
 
         // it('选择器初始化-不存在', function () {
         //     expect(BTGrid.createFrom("#abc").length).to.equal(0);
         // })
 
-        // it('选择器初始化-存在', function () {
-        //     this.createElement("div", null, "grid1")
-        //     expect(BTGrid.createFrom(".grid1").length).to.equal(1);
-        // })
+        it('选择器初始化-存在', function () {
+            this.createElement("div", null, "grid1")
+            expect(Object.isNull(BTGrid.createFrom(".grid1"))).not.to.ok;
+            expect(Object.isNull(BTGrid.createFrom(".grid2"))).to.ok;
+        })
 
         it('元素初始化', function () {
             let target = this.createElement("div", null, "grid");

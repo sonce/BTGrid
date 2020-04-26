@@ -66,7 +66,7 @@ describe("BTGrid.ts", () => {
             expect(cell.textContent).to.equal('列1');
             cell = btGrid.getCell(0, 14);
             expect(cell.textContent).to.equal('列1');
-            cell = btGrid.getCellByIndex(0, 1);
+            cell = btGrid.getCellByIndex(0, 13);
             expect(cell.textContent).to.equal('列1');
             cell = btGrid.getCell(row, 0);
             expect(cell.textContent).to.equal('列0');
@@ -164,15 +164,23 @@ describe("BTGrid.ts", () => {
                 <div class="col-lg-1"></div>
                 <div class="col-lg-1"></div>
             </div>
+            <div class="row">
+                <div class="col-lg-5"></div>
+                <div class="col-lg-7"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-1"></div>
+                <div class="col-lg-7"></div>
+            </div>
             `
             let grid = this.createElement('div', gridContent, 'grid');
             let btGrid = BTGrid.createFrom(grid, { CellSizeMode: cellSizeMode.AutoShrink });
             let content = this.createElement('div', '列2', null, true);
 
             //大小12，插入大小2，需收缩2
-            let newCell = btGrid.addNewCel(content, 0, 1, 2);
+            let newCell = btGrid.addNewCel(content, 0, 2, 2);
             expect(!Object.isNull(newCell)).to.be.true;
-            let thirdCell = btGrid.getCellByIndex(0, 2);
+            let thirdCell = btGrid.getCellByIndex(0, 1);
             expect(btGrid.getCellSize(thirdCell)).to.equal(4);
 
             //大小10，插入大小2，无需收缩
@@ -202,8 +210,16 @@ describe("BTGrid.ts", () => {
             expect(btGrid.getCellSize(Cell1)).to.equal(1);
 
             //无法插入
-            newCell = btGrid.addNewCel(content, 4, 1, 2);
+            newCell = btGrid.addNewCel(content, 4, 1);
             expect(Object.isNull(newCell)).to.be.true;
+
+            //5,5列，不传宽度
+            newCell = btGrid.addNewCel(content, 5, 1);
+            expect(btGrid.getCellSize(newCell)).to.be.equal(1);
+
+            //插入头部，只能收缩右边列
+            newCell = btGrid.addNewCel(content, 6, 0,12);
+            expect(btGrid.getCellSize(newCell)).to.be.equal(10);
         })
 
         it('添加列-AutoAverageThrink', function () {
@@ -216,6 +232,11 @@ describe("BTGrid.ts", () => {
             </div>
             <div class="row">
                 <div class="col-lg-3"></div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4"></div>
                 <div class="col-lg-3"></div>
                 <div class="col-lg-3"></div>
             </div>
@@ -239,6 +260,14 @@ describe("BTGrid.ts", () => {
                 expect(btGrid.getCellSize(theCel)).to.equal(2);
             });
             expect(btGrid.getCellSize(newCel)).to.equal(6);
+
+            //不满列 。插入大于剩余列的新列
+            oldCells = btGrid.getCells(2);
+            newCel = btGrid.addNewCel(content, 2, 1, 12);
+            oldCells.forEach(theCel => {
+                expect(btGrid.getCellSize(theCel)).to.equal(1);
+            });
+            expect(btGrid.getCellSize(newCel)).to.equal(9);
         })
 
         it('删除列',function(){
@@ -261,6 +290,87 @@ describe("BTGrid.ts", () => {
             btGrid.removeCel(cell);
             expect(row.childElementCount).to.equal(0);
             expect(btGrid.rowCount).to.equal(0);
+        })
+
+        it('调整大小',function(){
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-5">列0</div>
+                <div class="col-lg-3">列1</div>
+                <div class="col-lg-1">列2</div>
+                <div class="col-lg-3">列3</div>
+            </div>
+            `
+            
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+            let secondCol = btGrid.getCellByIndex(0,1);
+            let thirdCol = btGrid.getCellByIndex(0,2);
+            let firstCol = btGrid.getCellByIndex(0,0);
+            let lastCol = btGrid.getCellByIndex(0,3);
+            //第一列不允许调整位置
+            let roMe = firstCol.getBoundingClientRect();
+            var Top = roMe.top;
+            var Bottom = roMe.bottom;
+            var Left = roMe.left;
+            var Right = roMe.right;
+            var Width = roMe.width || Right - Left;
+            var Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(firstCol,Left-1000,Width+1000)).not.to.ok;
+
+            //最后一列不允许向右调整大小
+            roMe = lastCol.getBoundingClientRect();
+            Top = roMe.top;
+            Bottom = roMe.bottom;
+            Left = roMe.left;
+            Right = roMe.right;
+            Width = roMe.width || Right - Left;
+            Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(lastCol,Left,Width+1000)).not.to.ok;
+            
+            //下一列为1不允许调整
+            roMe = secondCol.getBoundingClientRect();
+            Top = roMe.top;
+            Bottom = roMe.bottom;
+            Left = roMe.left;
+            Right = roMe.right;
+            Width = roMe.width || Right - Left;
+            Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(secondCol,Left,Width+1000)).not.to.be.ok;
+
+            //调整超出下一列的大小
+            roMe = thirdCol.getBoundingClientRect();
+            Top = roMe.top;
+            Bottom = roMe.bottom;
+            Left = roMe.left;
+            Right = roMe.right;
+            Width = roMe.width || Right - Left;
+            Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(thirdCol,Left,Width+1000)).to.be.ok;
+            expect(btGrid.getCellSize(thirdCol)).to.be.equal(3);
+            expect(btGrid.getCellSize(lastCol)).to.be.equal(1);
+
+            //未改变
+            roMe = lastCol.getBoundingClientRect();
+            Top = roMe.top;
+            Bottom = roMe.bottom;
+            Left = roMe.left;
+            Right = roMe.right;
+            Width = roMe.width || Right - Left;
+            Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(lastCol,Left,Width-1000)).not.to.be.ok;
+
+            //缩小第三列
+            roMe = thirdCol.getBoundingClientRect();
+            Top = roMe.top;
+            Bottom = roMe.bottom;
+            Left = roMe.left;
+            Right = roMe.right;
+            Width = roMe.width || Right - Left;
+            Height = roMe.height || Bottom - Top;
+            expect(btGrid.resizeCol(thirdCol,Left,Width-2000)).to.be.ok;
+            expect(btGrid.getCellSize(thirdCol)).to.equal(1);
+            expect(btGrid.getCellSize(lastCol)).to.equal(3);
         })
     })
 })

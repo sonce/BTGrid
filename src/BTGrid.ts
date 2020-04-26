@@ -1,6 +1,7 @@
 import cellSizeMode from './cellSizeMode';
 import './util';
 import GridOption from './GridOption';
+import position from './position';
 /**
  * BTGrid
  */
@@ -8,9 +9,9 @@ export default class BTGrid {
 
     /** 配置 */
     option: GridOption;
-    target: HTMLElement;
+    target: Element;
     rowCount: number;
-    constructor(element: HTMLElement, option?: GridOption) {
+    constructor(element: Element, option?: GridOption) {
         const defaultOption = new GridOption();
         if (Object.isNull(option))
             this.option = defaultOption;
@@ -24,7 +25,7 @@ export default class BTGrid {
      * 添加widget
      * @param contentEl 新增的内容
      */
-    addWidget(contentEl: HTMLElement): HTMLElement;
+    addWidget(contentEl: Element): Element;
     /**
      * 添加WIDGET到指定的位置
      * @param contentEl 内容
@@ -32,33 +33,33 @@ export default class BTGrid {
      * @param cell 所在列
      * @param row 所在行
      */
-    addWidget(contentEl: HTMLElement, row: HTMLElement, cell: HTMLElement, collItemIndex: number): HTMLElement;
+    addWidget(contentEl: Element, row: Element, cell: Element, collItemIndex: number): Element;
     /**
      * 添加列并添加WIDGET
      * @param contentEl 内容
      * @param cellIndex 新增列的位置
      * @param row 所在行
      */
-    addWidget(contentEl: HTMLElement, row: HTMLElement, cell: HTMLElement): HTMLElement;
+    addWidget(contentEl: Element, row: Element, cell: Element): Element;
     /**
      * 添加列并添加WIDGET
      * @param contentEl 内容
      * @param cellIndex 新增列的位置
      * @param row 所在行
      */
-    addWidget(contentEl: HTMLElement, row: HTMLElement, cellIndex: number): HTMLElement;
+    addWidget(contentEl: Element, row: Element, cellIndex: number): Element;
     /**
      * 添加行并添加widget
      * @param contentEl 内容
      * @param rowIndex 新增行的位置
      */
-    addWidget(contentEl: HTMLElement, rowIndex: number): HTMLElement;
+    addWidget(contentEl: Element, rowIndex: number): Element;
     /**
      * 在行中添加列和widget
      * @param contentEl 内容
      * @param row 行
      */
-    addWidget(contentEl: HTMLElement, row: HTMLElement): HTMLElement;
+    addWidget(contentEl: Element, row: Element): Element;
     /**
      * 
      * @param contentEl widget内容
@@ -66,7 +67,7 @@ export default class BTGrid {
      * @param cellOrAddIndex 列，或新增列的位置
      * @param collItemIndex clitem的位置
      */
-    addWidget(contentEl: HTMLElement, rowOrAddIndex?: HTMLElement | number, cellOrAddIndex?: HTMLElement | number, collItemIndex?: number): HTMLElement {
+    addWidget(contentEl: Element, rowOrAddIndex?: Element | number, cellOrAddIndex?: Element | number, collItemIndex?: number): Element {
 
         if (typeof rowOrAddIndex == 'undefined')
             return this.addNewRow(contentEl);
@@ -122,19 +123,19 @@ export default class BTGrid {
      * 添加内容到新行
      * @param contentEl 内容
      */
-    private addNewRow(contentEl: HTMLElement): HTMLElement;
+    private addNewRow(contentEl: Element): Element;
     /**
      * 添加内容到新行
      * @param contentEl 内容
      * @param rowIndex 新行的位置
      */
-    private addNewRow(contentEl: HTMLElement, rowIndex: number): HTMLElement;
+    private addNewRow(contentEl: Element, rowIndex: number): Element;
     /**
      * 添加新行
      * @param contentEl 内容元素
      * @param rowIndex 行索引
      */
-    private addNewRow(contentEl: HTMLElement, rowIndex?: number): HTMLElement {
+    private addNewRow(contentEl: Element, rowIndex?: number): Element {
         const newRow = document.createElement('div');
 
         rowIndex = typeof rowIndex == 'undefined' ? this.rowCount : rowIndex;
@@ -203,27 +204,27 @@ export default class BTGrid {
      * @param cellIndex 列索引
      * @param rowIndex 行索引
      */
-    getCell(rowIndex: number, cellX: number): HTMLElement;
+    getCell(rowIndex: number, cellX: number): Element;
     /**
      * 通过坐标获取列
      * @param cellIndex 列位置索引
      * @param ownRow 所在行
      */
-    getCell(ownRow: HTMLElement, cellX: number): HTMLElement;
+    getCell(ownRow: Element, cellX: number): Element;
     /**
      * 通过坐标获取列
      * @param cellX CELL的位置，栅格列数量为12，则X值范围为0-11
      * @param ownRow 列所在的行
      */
-    getCell(ownRow: HTMLElement | number, cellX: number): HTMLElement;
+    getCell(ownRow: Element | number, cellX: number): Element;
     /**
      * 通过坐标获取列
      * @param cellX CELL的位置，栅格列数量为12，则X值范围为0-11
      * @param ownRow 列所在的行
      */
-    getCell(ownRow: HTMLElement | number, cellX: number): HTMLElement {
+    getCell(ownRow: Element | number, cellX: number): Element {
         // cellX = cellX > this.option.gridCellsCount ? this.option.gridCellsCount : cellX;
-        const cells: HTMLElement[] = this.getCells(ownRow);
+        const cells: Element[] = this.getCells(ownRow);
         let sizeCount = 0;
         for (let index = 0; index < cells.length; index++) {
             const theCell = cells[index];
@@ -240,59 +241,50 @@ export default class BTGrid {
      * @param cellIndex 列索引
      * @param rowIndex 行索引
      */
-    getCellByIndex(rowIndex: number, cellIndex: number): HTMLElement;
+    getCellByIndex(rowIndex: number, cellIndex: number): Element;
     /**
      * 通过索引获取列
      * @param cellIndex 列位置索引
      * @param ownRow 所在行
      */
-    getCellByIndex(ownRow: HTMLElement, cellIndex: number): HTMLElement;
+    getCellByIndex(ownRow: Element, cellIndex: number): Element;
     /**
      * 通过索引获取列
      * @param cellX CELL的位置，栅格列数量为12，则X值范围为0-11
      * @param ownRow 列所在的行
      */
-    getCellByIndex(ownRow: HTMLElement | number, cellIndex: number): HTMLElement {
-        const cells: HTMLElement[] = this.getCells(ownRow, cellIndex);
+    getCellByIndex(ownRow: Element | number, cellIndex: number): Element {
+        cellIndex = cellIndex < 0 ? 0 : cellIndex;
+        const cells: Element[] = this.getCells(ownRow);
+        cellIndex = cellIndex > cells.length ? cells.length - 1 : cellIndex;
         if (cells.length > 0)
-            return cells[0];
+            return cells[cellIndex];
     }
 
     /**
      * 获取列
      * @param ownRowOrIndex 所属行或者行索引
-     * @param startCellIndex X的位置
+     * @param excludeWillEmptyCell 是否不包含将要清空的列.例如：移动最后一个colitem。
      */
-    getCells(ownRowOrIndex: HTMLElement | number, startCellIndex?: number): HTMLElement[] {
-        let theRow: HTMLElement;
+    getCells(ownRowOrIndex: Element | number, excludeWillEmptyCell = false): Element[] {
+        let theRow: Element;
         if (typeof ownRowOrIndex == 'number')
             theRow = this.getRow(ownRowOrIndex);
         else
             theRow = ownRowOrIndex;
 
-        const cells: HTMLElement[] = Array.from(theRow.querySelectorAll(this.cellSelector));
-        const result: HTMLElement[] = [];
-        if (cells.length != 0) {
-            // let sizeCount = 0;
-            if (!Object.isNull(startCellIndex)) {
-                startCellIndex = startCellIndex < 0 ? 0 : startCellIndex;
-                startCellIndex = startCellIndex > cells.length ? cells.length - 1 : startCellIndex;
-            }
-            else
-                startCellIndex = 0;
-
-            for (let index = startCellIndex; index < cells.length; index++) {
+        const cells: Element[] = Array.from(theRow.querySelectorAll(this.cellSelector));
+        if (!excludeWillEmptyCell)
+            return cells;
+        const result: Element[] = [];
+        for (let index = 0; index < cells.length; index++) {
+            if (cells[index].childElementCount == 0)
                 result.push(cells[index]);
+            else {
+                const noMoving = cells[index].querySelector(`div:not(.${this.option.movingClass})`);
+                if (!Object.isNull(noMoving))
+                    result.push(cells[index]);
             }
-
-            // for (let index = 0; index < cells.length; index++) {
-            //     let theCell = cells[index];
-            //     let size: number = this.getCellSize(theCell);
-            //     sizeCount += size;
-            //     if (sizeCount <= cellIndex + 1) {
-            //         result.push(theCell);
-            //     }
-            // }
         }
         return result;
     }
@@ -302,27 +294,27 @@ export default class BTGrid {
      * @param contentEl 内容元素
      * @param rowIndex 行索引
      */
-    addNewCel(contentEl: HTMLElement, rowIndex: number): HTMLElement;
+    addNewCel(contentEl: Element, rowIndex: number): Element;
     /**
     * 添加新列
     * @param contentEl 内容元素
     * @param rowIndex 行
     */
-    addNewCel(contentEl: HTMLElement, ownRow: HTMLElement): HTMLElement;
+    addNewCel(contentEl: Element, ownRow: Element): Element;
     /**
      * 
      * @param contentEl 
      * @param ownRow 
      * @param cellIndex 
      */
-    addNewCel(contentEl: HTMLElement, ownRow: HTMLElement, cellIndex: number, width?: number): HTMLElement;
+    addNewCel(contentEl: Element, ownRow: Element, cellIndex: number, width?: number): Element;
     /**
      * 
      * @param contentEl 
      * @param rowIndex 
      * @param cellIndex 
      */
-    addNewCel(contentEl: HTMLElement, rowIndex: number, cellIndex: number, width?: number): HTMLElement;
+    addNewCel(contentEl: Element, rowIndex: number, cellIndex: number, width?: number): Element;
     /**
      * 
      * @param contentEl 内容元素
@@ -330,8 +322,8 @@ export default class BTGrid {
      * @param width 列宽度
      * @param ownRowOrIndex 行索引或者行元素
      */
-    addNewCel(contentEl: HTMLElement, ownRowOrIndex: HTMLElement | number, cellIndex?: number, width?: number): HTMLElement {
-        let theRow: HTMLElement;
+    addNewCel(contentEl: Element, ownRowOrIndex: Element | number, cellIndex?: number, width?: number): Element {
+        let theRow: Element;
         if (typeof ownRowOrIndex == 'number')
             theRow = this.getRow(ownRowOrIndex);
         else
@@ -353,16 +345,38 @@ export default class BTGrid {
     }
 
     /**
+     * 该行是否可以添加
+     * @param row 行
+     * @param width 宽度
+     */
+    private canAdd(row: Element, width?: number): boolean {
+        const cellsCount = this.getCells(row, true).length;
+        //超出了栅格列大小
+        if (cellsCount >= this.option.gridCellsCount)
+            return false;
+
+        const remainSize = this.getRemainCellsSize(row, true);
+        // const remainCellsCount = this.option.gridCellsCount - cellsCount;
+
+        //如果宽度没有指定，且剩余大小大于0
+        if (this.option.CellSizeMode == cellSizeMode.None || (remainSize > 0 && Object.isNull(width)) || remainSize >= width) {
+            if (remainSize <= 0)
+                return false;
+        }
+
+        return true;
+    }
+    /**
      * 如果可以插入，则返回true，否则返回false
      * @param row 行
      * @param cell 列
      * @param cellIndex 列索引
      * @param width 宽度
      */
-    private autoCellSize(row: HTMLElement, cell: HTMLElement, cellIndex: number, width?: number): boolean {
+    private autoCellSize(row: Element, cell: Element, cellIndex: number, width?: number): boolean {
         const cellsCount = this.getCells(row).length;
         //超出了栅格列大小
-        if (cellsCount >= this.option.gridCellsCount)
+        if (!this.canAdd(row, width))
             return false;
         const remainSize = this.getRemainCellsSize(row);
         const remainCellsCount = this.option.gridCellsCount - cellsCount;
@@ -375,7 +389,7 @@ export default class BTGrid {
             return this.autoCellSizeOfAverageShrink(row, cell, cellIndex, width);
     }
 
-    autoCellSizeOfAverageShrink(row: HTMLElement, cell: HTMLElement, cellIndex: number, width?: number): boolean {
+    autoCellSizeOfAverageShrink(row: Element, cell: Element, cellIndex: number, width?: number): boolean {
         const cells = this.getCells(row);
         let cellsCount = cells.length;
         const remainCellsCount = this.option.gridCellsCount - cellsCount;
@@ -415,7 +429,7 @@ export default class BTGrid {
      * @param remainSize 剩余大小
      * @param width 宽度
      */
-    autoCellSizeOfShrink(row: HTMLElement, cell: HTMLElement, cellIndex: number, remainSize: number, remainCellsCount: number, width?: number): boolean {
+    autoCellSizeOfShrink(row: Element, cell: Element, cellIndex: number, remainSize: number, remainCellsCount: number, width?: number): boolean {
         width = Object.isNull(width) ? 1 : width;
         width = remainCellsCount > width ? width : remainCellsCount;
         cell.className = this.GetCellClass(width);
@@ -449,7 +463,7 @@ export default class BTGrid {
      * @param cells 收缩的列
      * @param thrinkRemainSize 剩余收缩的大小
      */
-    private thrinkTheCell(theCel: HTMLElement, thrinkRemainSize: number): number {
+    private thrinkTheCell(theCel: Element, thrinkRemainSize: number): number {
         const theCelSize = this.getCellSize(theCel);
         const canThrinkSize = theCelSize - 1;
         // 判断是否有空间可收缩
@@ -475,52 +489,22 @@ export default class BTGrid {
      * @param width 大小
      * @param remainSize 剩余大小
      */
-    private autoCellSizeOfNone(row: HTMLElement, cell: HTMLElement, remainSize: number, width?: number): boolean {
-        if (remainSize == 0)
-            return false;
+    private autoCellSizeOfNone(row: Element, cell: Element, remainSize: number, width?: number): boolean {
+        // if (remainSize == 0)
+        //     return false;
         width = Object.isNull(width) ? 1 : width;
         width = remainSize > width ? width : remainSize;
         cell.className = this.cellClassFormat.format(width.toString());
         return true;
     }
 
-    // private autoCellSizeOfShrink(row: HTMLElement, cell: HTMLElement, cellIndex: number, remainSize: number, width?: number):boolean {
-    //     width = Object.isNull(width) ? 1 : width;
-    //     width = remainSize > width ? width : remainSize;
-
-    //     let cells = this.getCells(row);
-
-    // }
-
-    // /**
-    //  * 获取该位置能够放入CELL最大的宽度
-    //  * @param cellIndex 插入Cell的位置,空则最后一列
-    //  * @param ownRow 所在行
-    //  */
-    // getAddMaxWidth(ownRow: HTMLElement, cellIndex?: number): number {
-    //     const cells: HTMLElement[] = this.getCells(ownRow);
-    //     if (typeof cellIndex != 'undefined' && cellIndex != null) {
-    //         cellIndex = cellIndex < 0 ? 0 : cellIndex;
-    //         cellIndex = cellIndex > cells.length ? cells.length : cellIndex;
-    //     }
-    //     else
-    //         cellIndex = cells.length;
-
-    //     let sizeCount = 0;
-    //     for (let index = 0; index < cellIndex; index++) {
-    //         const size = this.getCellSize(cells[index]);
-    //         sizeCount += size;
-    //     }
-    //     return this.gridCellsCount - sizeCount;
-    // }
-
-
     /**
      * 获取当前行中列所占用的大小
      * @param ownRowOrIndex 所在行或者行索引
+     * @param excludeWillEmptyCell 是否不包含将要清空的列.例如：移动最后一个colitem。
      */
-    getExistCellsSize(ownRowOrIndex: HTMLElement | number): number {
-        const cells = this.getCells(ownRowOrIndex);
+    getExistCellsSize(ownRowOrIndex: Element | number, excludeWillEmptyCell = false): number {
+        const cells = this.getCells(ownRowOrIndex, excludeWillEmptyCell);
         let sizeCount = 0;
         cells.forEach(cell => {
             const size = this.getCellSize(cell);
@@ -532,9 +516,10 @@ export default class BTGrid {
     /**
      * 获取此行可增加多大的列
      * @param ownRowOrIndex 所在行或者行索引
+     * @param excludeWillEmptyCell 是否不包含将要清空的列.例如：移动最后一个colitem。
      */
-    getRemainCellsSize(ownRowOrIndex: HTMLElement | number): number {
-        const existSize = this.getExistCellsSize(ownRowOrIndex);
+    getRemainCellsSize(ownRowOrIndex: Element | number, excludeWillEmptyCell = false): number {
+        const existSize = this.getExistCellsSize(ownRowOrIndex, excludeWillEmptyCell);
         return this.option.gridCellsCount - existSize;
     }
 
@@ -542,7 +527,7 @@ export default class BTGrid {
      * 获取栅格列的大小。col-lg-3,则返回3。如果没有对应的栅格列样式，则返回0
      * @param cell 需要获取size的列。
      */
-    getCellSize(cell: HTMLElement): number {
+    getCellSize(cell: Element): number {
         if (String.isNullOrEmpty(cell.className))
             return 0;
         const matchResult = cell.className.match(this.cellClassRegex);
@@ -559,7 +544,7 @@ export default class BTGrid {
      * @param row 行
      * @param cellIndex 列索引
      */
-    getCellX(row: HTMLElement | number, cellIndex: number): number {
+    getCellX(row: Element | number, cellIndex: number): number {
         const cells = this.getCells(row);
         let x = 0;
         for (let index = 0; index < cellIndex; index++) {
@@ -567,21 +552,6 @@ export default class BTGrid {
             x += this.getCellSize(element);
         }
         return x;
-    }
-
-    /**
-     * 添加移除样式
-     * @param cell 列
-     * @param newGridClass 需要添加的样式，如果未空则移除样式 
-     */
-    private addOrRemoveGridClass(cell: HTMLElement, newGridClass = ''): string {
-        const res = cell.className.replace(/(^|\s+)col-\w+-\d+(\s+|$)/, newGridClass);
-        if (cell.className == res) {
-            cell.classList.add(newGridClass);
-        }
-        else
-            cell.className = res;
-        return cell.className;
     }
 
     /**
@@ -595,7 +565,56 @@ export default class BTGrid {
             this.removeRow(parent);
     }
 
+    /**
+     * 调整大小
+     * @param col 列
+     * @param x X坐标更改
+     * @param width 宽度
+     */
+    resizeCol(col: Element, x: number, newWidth: number): boolean {
+        const ro = col.getBoundingClientRect();
+        const Left = ro.left;
+        const Width = ro.width;
+        const size = this.getCellSize(col);
+        const perSizeWidth = Width / size;
+        let newSize = parseInt((newWidth / perSizeWidth).toString());
+        newSize = newSize < 1 ? 1 : newSize;
 
+        let changeSize = newSize - size;
+        if (changeSize != 0) {
+            let relatedCol: Element;
+            //X坐标变更，左边
+            if (x - Left != 0) {
+                relatedCol = col.previousElementSibling;
+            }
+            else {
+                //右边
+                relatedCol = col.nextElementSibling;
+            }
+            //在第一列或者最后一列
+            if (Object.isNull(relatedCol))
+                return false;
+            let relatedColSize = this.getCellSize(relatedCol);
+            //关联调整的列大小为1,且需要缩小
+            if (changeSize > 0 && relatedColSize == 1)
+                return false;
+
+            //扩大，关联列缩小
+            if (relatedColSize - changeSize < 1) {
+                //设置关联列大小为1
+                changeSize = 1 - relatedColSize;
+                relatedColSize = 1;
+                newSize = size + Math.abs(changeSize);
+            }
+            else
+                relatedColSize -= changeSize;
+
+            this.addOrRemoveGridClass(relatedCol, this.GetCellClass(relatedColSize));
+            this.addOrRemoveGridClass(col, this.GetCellClass(newSize));
+            return true;
+        }
+        return false;
+    }
     //#endregion
 
     //#region  colItem
@@ -657,7 +676,7 @@ export default class BTGrid {
      * @param ownRow 所在的行
      * @param itemIndex ColItem的纵向位置
      */
-    addColItem(contentEl: HTMLElement, ownRow: HTMLElement, ownCell: HTMLElement, itemIndex: number): HTMLElement;
+    addColItem(contentEl: Element, ownRow: Element, ownCell: Element, itemIndex: number): Element;
     /**
      * 添加ColItem到列中
      * @param contentEl 内容元素
@@ -665,23 +684,23 @@ export default class BTGrid {
      * @param rowIndex 所在的行
      * @param itemIndex ColItem的纵向位置
      */
-    addColItem(contentEl: HTMLElement, rowIndex: number, cellIndex: number, itemIndex: number): HTMLElement;
+    addColItem(contentEl: Element, rowIndex: number, cellIndex: number, itemIndex: number): Element;
     /**
      * 添加ColItem到列中
      * @param contentEl 内容元素
      * @param ownCell 所在的列
      * @param ownRow 所在的行
      */
-    addColItem(contentEl: HTMLElement, ownRow: HTMLElement, ownCell: HTMLElement): HTMLElement;
+    addColItem(contentEl: Element, ownRow: Element, ownCell: Element): Element;
     /**
      * 添加ColItem到列中
      * @param contentEl 内容元素
      * @param cellIndex 列的位置
      * @param ownRow 所在的行
      */
-    addColItem(contentEl: HTMLElement, ownRow: HTMLElement, cellIndex: number): HTMLElement;
-    addColItem(contentEl: HTMLElement, ownRowOrIndex: HTMLElement | number, cellElOrIndex: HTMLElement | number, itemIndex?: number): HTMLElement {
-        let theCell: HTMLElement;
+    addColItem(contentEl: Element, ownRow: Element, cellIndex: number): Element;
+    addColItem(contentEl: Element, ownRowOrIndex: Element | number, cellElOrIndex: Element | number, itemIndex?: number): Element {
+        let theCell: Element;
         if (typeof cellElOrIndex == 'number') {
             if (typeof ownRowOrIndex == 'number')
                 theCell = this.getCellByIndex(ownRowOrIndex, cellElOrIndex);
@@ -690,9 +709,13 @@ export default class BTGrid {
         }
         else
             theCell = cellElOrIndex;
-        const cellItem = document.createElement('div');
-        cellItem.className = 'colitem';
-        cellItem.appendChild(contentEl);
+        let cellItem = contentEl;
+        if (!contentEl.is(this.colItemSelector)) {
+            cellItem = document.createElement('div');
+            cellItem.className = 'colitem';
+            cellItem.appendChild(contentEl);
+        }
+
         const colItems = this.getColItems(theCell);
         if (colItems.length == 0 || itemIndex >= colItems.length)
             theCell.appendChild(cellItem);
@@ -704,8 +727,8 @@ export default class BTGrid {
     private get colItemSelector(): string {
         return `.${this.option.colItemClass}`;
     }
-    private getColItems(cell: HTMLElement): HTMLElement[] {
-        const colItems = cell.querySelectorAll<HTMLElement>(this.colItemSelector);
+    private getColItems(cell: Element): Element[] {
+        const colItems = cell.querySelectorAll<Element>(this.colItemSelector);
         return Array.from(colItems);
     }
 
@@ -720,22 +743,143 @@ export default class BTGrid {
             this.removeCel(parent);
     }
 
-    // move(colitem: Element, x: number, y: number, finish = true): boolean {
-    //     if(!finish&&!colitem.classList.contains(this.option.movingClass)){
-    //         colitem.classList.add(this.option.movingClass);
-    //     }
+    /**
+     * 移动colitem
+     * @param colitem 项
+     * @param x x轴坐标
+     * @param y y轴坐标
+     * @param finish 是否完成
+     */
+    move(colitem: Element, x: number, y: number, finish = true): boolean {
+        if (!colitem.classList.contains(this.option.movingClass)) {
+            colitem.classList.add(this.option.movingClass);
+        }
+        const elements = this.target.ownerDocument.elementsFromPoint(x, y);
+        const toColItem = this.filterFirstOrDefault(this.colItemSelector, ...elements);
+        //自身
+        if (Object.isNull(toColItem) || toColItem == colitem)
+            return false;
+        const width = this.getCellSize(colitem.parentElement);
+        const toRow = this.filterFirstOrDefault(this.rowSelector, ...elements);
+        const toCell = this.filterFirstOrDefault(this.cellSelector, ...elements);
+        let toCellIndex = Array.from(toRow.children).indexOf(toCell);
+        let toColItemIndex = Array.from(toCell.children).indexOf(toColItem);
 
-    //     const elements = this.target.ownerDocument.elementsFromPoint(x, y);
-    //     let canDrop = false;
+        //获取需要放入的位置
+        const p = this.positionOf(toColItem, x, y);
+        let canDrop = true;
+        //判断是否可以插入.上下两个位置不需要判断
+        if (p == position.left || p == position.right) {
+            canDrop = this.canAdd(toRow, width);
+        }
 
-    //     if(canDrop)
-    //         return true;
+        //可以放下
+        if (canDrop) {
+            if (finish) {
+                colitem.classList.remove(this.option.movingClass);
+                this.removeColItem(colitem);
+                if (p == position.left || p == position.right) {
+                    toCellIndex += (p == position.right ? 1 : 0);
+                    return !Object.isNull(this.addNewCel(colitem, toRow, toCellIndex, width));
+                }
+                else {
+                    toColItemIndex += (p == position.bottom ? 1 : 0);
+                    return !Object.isNull(this.addColItem(colitem, toRow, toCell, toColItemIndex));
+                }
+            }
+            return true;
+        }
+        else
+            return false;
+    }
 
-    //     if (finish)
-    //         colitem.classList.remove(this.option.movingClass);
-    // }
+    /**
+     * 改变 项 的大小。只能改变高度。宽度由列的宽度决定
+     * @param colItem 项
+     * @param height 高度
+     */
+    resizeColItem(colItem: Element, height: number): boolean {
+        (colItem as HTMLElement).style.height = height.toString() + 'px';
+        return true;
+    }
     //#endregion
 
+    //#region  Utility
+
+    /**
+     * 获取鼠标靠近元素的哪一个边
+     * @param element 元素
+     * @param x 鼠标x位置
+     * @param y 鼠标y位置
+     */
+    positionOf(element: Element, x: number, y: number): position {
+        const ro = element.getBoundingClientRect();
+        const Top = ro.top;
+        const Left = ro.left;
+        const Right = ro.right;
+        const Width = ro.width;
+        const Height = ro.height;
+
+
+        if (x <= Left + Width * 0.2)
+            return position.left;
+        if (x < Right - Width * 0.2) {
+            if (y > Top + Height * 0.5)
+                return position.bottom;
+            else
+                return position.top;
+        }
+
+        return position.right;
+    }
+
+    filterFirstOrDefault(selector: string, ...elements: Element[]): Element {
+        const result = this.filter(selector, ...elements);
+        if (result.length > 0)
+            return result[0];
+    }
+    /**
+     * 从集合中筛选获取符合选择器的元素
+     * @param selector 筛选的选择器
+     * @param elements 元素集合
+     */
+    filter(selector: string, ...elements: Element[]): Element[] {
+        const result: Element[] = [];
+        for (let index = 0; index < elements.length; index++) {
+            const element = elements[index];
+            if (element.is(selector))
+                result.push(element);
+        }
+        return result;
+    }
+
+    /**
+     * 添加移除样式
+     * @param cell 列
+     * @param newGridClass 需要添加的样式，如果未空则移除样式 
+     */
+    private addOrRemoveGridClass(cell: Element, newGridClass: string): string {
+        const res = cell.className.replace(/(^|\s+)col-\w+-\d+(\s+|$)/, newGridClass);
+        if (cell.className == res) {
+            cell.classList.add(newGridClass);
+        }
+        else
+            cell.className = res;
+        return cell.className;
+    }
+
+    // private getBoundingClientRect(element: Element): DOMRect {
+    //     const ro = element.getBoundingClientRect();
+    //     const Top = ro.top;
+    //     const Bottom = ro.bottom;
+    //     const Left = ro.left;
+    //     const Right = ro.right;
+    //     ro.width = ro.width || Right - Left;
+    //     ro.height = ro.height || Bottom - Top;
+    //     return ro;
+    // }
+
+    //#endregion
     /**
      * 创建BTGrid
      * @param selector 选择器
@@ -748,16 +892,17 @@ export default class BTGrid {
      * @param element 元素
      * @param option 配置
      */
-    static createFrom(element: HTMLElement, option?: GridOption): BTGrid;
-    static createFrom(elementOrSelector: HTMLElement | string, option?: GridOption): BTGrid[] | BTGrid {
-        if (Object.isNull(elementOrSelector))
-            return null;
-        let targets: HTMLElement;
+    static createFrom(element: Element, option?: GridOption): BTGrid;
+    static createFrom(elementOrSelector: Element | string, option?: GridOption): BTGrid {
+        let targets: Element;
         if (typeof elementOrSelector == 'string')
             targets = document.querySelector(elementOrSelector);
         else
             targets = elementOrSelector;
-        const instances: BTGrid = new BTGrid(targets, option);
-        return instances;
+
+        if (!Object.isNull(targets)) {
+            const instances: BTGrid = new BTGrid(targets, option);
+            return instances;
+        }
     }
 }
