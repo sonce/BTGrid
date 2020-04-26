@@ -2,7 +2,10 @@
 // Generated on Thu Feb 18 2016 22:00:23 GMT+0100 (CET)
 var path = require('path');
 module.exports = function (config) {
-    console.log(!!process.env.watch)
+    let watch = true;
+    if (process.env.watch === "false") {
+        watch = false;
+    }
     config.set({
         client: {
             mocha: {
@@ -13,7 +16,10 @@ module.exports = function (config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: !!process.env.CI||!!process.env.watch,
+        singleRun: !!process.env.CI || !watch,
+
+        // enable / disable watching file and executing tests whenever any file changes
+        autoWatch: watch,
 
         browsers: process.env.CI ? ['ChromeHeadlessCustom', 'Firefox'] : ['ChromeHeadlessCustom'],
         customLaunchers: {
@@ -66,10 +72,6 @@ module.exports = function (config) {
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN
         // config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
-
-
-        // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: !!!process.env.watch,
 
         // Concurrency level
         // how many browser should be started simultaneous
