@@ -21,7 +21,7 @@ module.exports = function (config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: watch,
 
-        browsers: process.env.CI ? ['ChromeHeadlessCustom', 'Firefox'] : ['ChromeHeadlessCustom'],
+        browsers: process.env.CI ? ['ChromeHeadlessCustom', 'FirefoxHeadless'] : ['ChromeHeadlessCustom'],
         customLaunchers: {
             ChromeHeadlessCustom: {
                 base: 'ChromeHeadless',
