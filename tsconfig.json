@@ -1,18 +1,29 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
         "target": "es5",
         "module": "commonJS",
-        "removeComments": true,
+        // "removeComments": true,
         "esModuleInterop": true,
         "noImplicitAny": true,
         "sourceMap": true,
-        "listEmittedFiles": true,
+        // "listEmittedFiles": true,
+        "declaration": true,
+        "declarationDir": "dist/types",
+        "outDir": "dist/lib",
         "baseUrl": ".",
-        "moduleResolution": "node",
         "paths": {
-            "*" : ["custom_typings/*"]
-        }
+            "*": [
+                "custom_typings/*"
+            ]
+        },
+        "typeRoots": [
+            "node_modules/@types"
+        ]
     },
+    "include": [
+        "src"
+    ],
     "exclude": [
         "node_modules",
         "'./**/*.d.ts'"

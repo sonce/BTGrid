@@ -82,6 +82,10 @@ module.exports = function (config) {
                 module: "commonjs",
                 sourceMap: true
             },
+            include: [
+                "src/**/*.ts",
+                "test/**/*.spec.ts"
+            ],
             coverageOptions: {
                 instrumentation: !process.env.isDebug
             },

@@ -5,6 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/sonce/BTGrid/badge.svg?branch=master)](https://coveralls.io/github/sonce/BTGrid?branch=master)
 [![npm](https://img.shields.io/badge/npm-0.1.4-orange.svg)](https://www.npmjs.com/package/btgrid)
 [![NPM downloads](http://img.shields.io/npm/dm/BTGrid.svg?style=flat-square)](http://www.npmtrends.com/btgrid)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/sonce/BTGrid.svg)](http://isitmaintained.com/project/sonce/BTGrid "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/sonce/BTGrid.svg)](http://isitmaintained.com/project/sonce/BTGrid "Percentage of issues still open")
 
 最好用的 `JS|TS` 第三方库脚手架
