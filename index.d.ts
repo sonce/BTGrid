@@ -1,1 +1,2 @@
-export declare const name = "base";
+import BTGrid from './dist/types/'
+export default BTGrid;

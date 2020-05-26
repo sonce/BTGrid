@@ -1,4 +1,5 @@
-import BTGrid from './BTGrid';
-import './util';
+import BTGridClass from './BTGrid';
+import initUtility from './util';
 
-export default BTGrid;
+initUtility();
+export default BTGridClass;

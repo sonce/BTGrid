@@ -134,11 +134,21 @@ describe("BTGrid.ts", () => {
         it('元素初始化', function () {
             let target = this.createElement("div", null, "grid");
             expect(BTGrid.createFrom(target)).to.not.equal(null);
+            //已经初始化，从内存中获取实例
+            expect(BTGrid.createFrom(target)).to.not.equal(null);
         })
 
         it('行数', function () {
             let target = this.createElement('div', '<div><div class="row"></div><div class="row"></div></div>', 'grid');
             expect(BTGrid.createFrom(target).rowCount).to.equal(2);
+        })
+
+        it('增加自定义行的样式', function () {
+            let grid = this.createElement('div', '');
+            let btGrid = BTGrid.createFrom(grid, { customRowClass: "no-gutters" });
+            let contentEl = this.createElement('div', 'abc');
+            let row = btGrid.addWidget(contentEl);
+            expect(row.className.indexOf("no-gutters") != -1).to.be.ok;
         })
     })
 })

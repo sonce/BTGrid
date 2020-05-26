@@ -163,6 +163,70 @@ describe("Util", () => {
             expect(btGrid.positionOf(row, Left + Width / 2 + 1, Top + 1)).to.equal(position.top);
             expect(btGrid.positionOf(row, Left + Width / 2 + 1, Bottom - 1)).to.equal(position.bottom);
         })
+
+        it('获取父元素',function(){
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="colitem">
+                    b
+                    </div>
+                    <div class="colitem">
+                    c
+                    </div>
+                </div>
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+            let row = btGrid.getRow(0)
+            let col = btGrid.getCell(0,0)
+            let colItem = col.firstElementChild;
+
+            let parents  = colItem.getParents();
+            expect(parents.length).to.be.equal(4);
+            let closetParent = colItem.getColsetParent();
+            expect(closetParent.classList.contains('col-lg-3')).to.be.true;
+
+            parents  = colItem.getParents(null,row);
+            expect(parents.length).to.be.equal(2);
+            closetParent = colItem.getColsetParent(null,row)
+            expect(closetParent.classList.contains('col-lg-3')).to.be.true;
+
+            parents  = colItem.getParents(".row");
+            expect(parents.length).to.be.equal(1);
+            closetParent = colItem.getColsetParent('.row',row)
+            expect(closetParent.classList.contains('row')).to.be.true;
+
+            parents  = colItem.getParents(".row",row);
+            expect(parents.length).to.be.equal(1);
+            closetParent = colItem.getColsetParent('.row',col)
+            expect(Object.isNull(closetParent)).to.be.true;
+
+            closetParent = colItem.getColsetParent(null,col)
+            expect(closetParent.classList.contains('col-lg-3')).to.be.true;
+        })
+
+        it('元素索引位置',function(){
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="colitem">
+                    b
+                    </div>
+                    <div class="colitem">
+                    c
+                    </div>
+                </div>
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid);
+            let cell = btGrid.getCellByIndex(0,0);
+            let colItem = cell.lastElementChild;
+            expect(colItem.indexOfParent()).to.be.equal(1);
+            expect(cell.indexOfParent()).to.be.equal(0);
+        })
     })
 })
 

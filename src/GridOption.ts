@@ -3,10 +3,12 @@ import cellSizeMode from './cellSizeMode';
 export default class GridOption {
     /** 行样式 */
     rowClass?= 'row';
+    /** 自定义行样式 */
+    customRowClass?: string;
     /** 列大小模式 */
-    CellSizeMode?: cellSizeMode = cellSizeMode.AutoShrink;
+    CellSizeMode?: cellSizeMode = cellSizeMode.AutoAverageShrink;
     /** 栅格列数量。1-12。可自定义 */
-    gridCellsCount?= 12;
+    gridSize?= 12;
     /** 列样式 */
     cellClassFormat?= 'col-lg';
     /**
@@ -16,5 +18,9 @@ export default class GridOption {
     /**
      * 移动时的样式
      */
-    movingClass?: string='btui-draggable-moving';
+    movingClass?: string = 'btui-draggable-moving';
+    /**
+     * 移动目标的样式
+     */
+    moveTargetClass?: string = 'btui-dragable-target';
 }

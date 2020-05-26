@@ -87,16 +87,16 @@ describe("BTGrid.ts", () => {
             let btGrid = BTGrid.createFrom(grid, { CellSizeMode: cellSizeMode.AutoAverageShrink });
 
             let row1 = btGrid.getRow(0);
-            //只有一个项
-            let cell = btGrid.getCellByIndex(row1, 0);
-            btGrid.removeColItem(cell.firstElementChild);
-            expect(row1.childElementCount).to.equal(1);
-
             //有多个项
-            cell = btGrid.getCellByIndex(row1, 0);
-            btGrid.removeColItem(cell.firstElementChild);
-            expect(row1.childElementCount).to.equal(1);
+            let cell = btGrid.getCellByIndex(row1, 0);
+            btGrid.removeColItemByIndex(0, 1, 0);
+            expect(row1.childElementCount).to.equal(2);
             expect(cell.childElementCount).to.equal(1);
+
+            //只有一个项
+            cell = btGrid.getCellByIndex(row1, 0);
+            btGrid.removeColItemByIndex(0, 0, 0);
+            expect(row1.childElementCount).to.equal(1);
         })
 
         it('移动', function () {
@@ -150,7 +150,7 @@ describe("BTGrid.ts", () => {
             var Right = roMe.right;
             var Width = roMe.width || Right - Left;
             var Height = roMe.height || Bottom - Top;
-            expect(btGrid.move(colitem, Left + 2, Top + Height / 2)).to.be.false;
+            expect(btGrid.moveByIndex(0, 0, 0, Left + 2, Top + Height / 2, false)).to.be.false;
 
             //上下插入
             let target = btGrid.getCellByIndex(row1, 0).lastElementChild as HTMLElement;
@@ -163,7 +163,7 @@ describe("BTGrid.ts", () => {
             Right = ro.right;
             Width = ro.width || Right - Left;
             Height = ro.height || Bottom - Top;
-            expect(btGrid.move(colitem, Left + Width * 0.2 + 1, Top + 1, true)).to.be.true;
+            expect(btGrid.moveByIndex(0, 0, 0, Left + Width * 0.2 + 1, Top + 1)).to.be.true;
             expect(target.previousElementSibling).to.equal(colitem);
             expect(btGrid.rowCount).to.equal(3);
             //下
@@ -174,7 +174,7 @@ describe("BTGrid.ts", () => {
             Right = ro.right;
             Width = ro.width || Right - Left;
             Height = ro.height || Bottom - Top;
-            expect(btGrid.move(colitem, Left + Width * 0.2 + 1, Bottom - 1, true)).to.be.true;
+            expect(btGrid.move(colitem, Left + Width * 0.2 + 1, Bottom - 1)).to.be.true;
             expect(target.nextElementSibling).to.equal(colitem);
             expect(btGrid.rowCount).to.equal(3);
 
@@ -201,7 +201,7 @@ describe("BTGrid.ts", () => {
             Right = ro.right;
             Width = ro.width || Right - Left;
             Height = ro.height || Bottom - Top;
-            expect(btGrid.move(colitem, Right - 1, Top + 1,false)).to.be.true;
+            expect(btGrid.move(colitem, Right - 1, Top + 1, false)).to.be.true;
             expect(btGrid.move(colitem, Right - 1, Top + 1, true)).to.be.true;
             expect(btGrid.getCells(row2).length).to.equal(2);
             expect(btGrid.getCellByIndex(row2, 1).textContent).to.equal('Me');
@@ -217,6 +217,7 @@ describe("BTGrid.ts", () => {
             Width = ro.width || Right - Left;
             Height = ro.height || Bottom - Top;
             expect(btGrid.move(colitem, Left + 1, Top + 1, true)).to.be.false;
+            expect(btGrid.move(colitem, Left + 1, Top + 1, false)).to.be.false;
         })
 
         it('调整大小', function () {
@@ -231,7 +232,7 @@ describe("BTGrid.ts", () => {
             let grid = this.createElement('div', gridContent, 'grid');
             let btGrid = BTGrid.createFrom(grid);
             let colitem = btGrid.getCellByIndex(0, 0).lastElementChild;
-            btGrid.resizeColItem(colitem, 200);
+            btGrid.resizeColItemByIndex(0, 0, 0, 200);
             let roMe = colitem.getBoundingClientRect();
             var Top = roMe.top;
             var Bottom = roMe.bottom;

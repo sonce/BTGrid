@@ -240,6 +240,9 @@ describe("BTGrid.ts", () => {
                 <div class="col-lg-3"></div>
                 <div class="col-lg-3"></div>
             </div>
+            <div class="row">
+                <div class="col-lg-12"></div>
+            </div>
             `
             let grid = this.createElement('div', gridContent, 'grid');
             let btGrid = BTGrid.createFrom(grid, { CellSizeMode: cellSizeMode.AutoAverageShrink });
@@ -247,11 +250,15 @@ describe("BTGrid.ts", () => {
 
             //满列 3列，平均分。每列4
             let oldCells = btGrid.getCells(0);
-            let newCel = btGrid.addNewCel(content, 0);
-            oldCells.forEach(theCel => {
-                expect(btGrid.getCellSize(theCel)).to.equal(2);
-            });
-            expect(btGrid.getCellSize(newCel)).to.equal(4);
+            let newCel = btGrid.addNewCel(content, 0, 5, 1);
+            for (let index = 0; index < oldCells.length; index++) {
+                const theCel = oldCells[index];
+                if (index == oldCells.length - 1)
+                    expect(btGrid.getCellSize(theCel)).to.equal(2);
+                else
+                    expect(btGrid.getCellSize(theCel)).to.equal(3);
+            }
+            expect(btGrid.getCellSize(newCel)).to.equal(1);
 
             //不满列 3*3列。插入6。
             oldCells = btGrid.getCells(1);
@@ -268,6 +275,36 @@ describe("BTGrid.ts", () => {
                 expect(btGrid.getCellSize(theCel)).to.equal(1);
             });
             expect(btGrid.getCellSize(newCel)).to.equal(9);
+
+            let oldCel = btGrid.getCellByIndex(3,0);
+            newCel = btGrid.addNewCel(content,3,1);
+            expect(oldCel.className).to.equal('col-lg-6');
+            expect(newCel.className).to.equal('col-lg-6');
+        })
+
+        it('列-AutoAverageThrink', function () {
+            let gridContent = `
+            <div class="row">
+                <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
+            </div>
+            `
+            let grid = this.createElement('div', gridContent, 'grid');
+            let btGrid = BTGrid.createFrom(grid, { CellSizeMode: cellSizeMode.AutoAverageShrink });
+            btGrid.autoCellSizeOfAverageShrink(btGrid.getRow(0));
+            let cell1 = btGrid.getCellByIndex(0, 0);
+            expect(cell1.className).to.equal('col-lg-2');
+            let cell2 = btGrid.getCellByIndex(0, 1);
+            expect(cell2.className).to.equal('col-lg-2');
+            let cell3 = btGrid.getCellByIndex(0, 2);
+            expect(cell3.className).to.equal('col-lg-2');
+            let cell4 = btGrid.getCellByIndex(0, 3);
+            expect(cell4.className).to.equal('col-lg-2');
+            let cell5 = btGrid.getCellByIndex(0, 4);
+            expect(cell5.className).to.equal('col-lg-4');
         })
 
         it('删除列', function () {
@@ -277,7 +314,6 @@ describe("BTGrid.ts", () => {
                 <div class="col-lg-3">列1</div>
             </div>
             `
-
             let grid = this.createElement('div', gridContent, 'grid');
             let btGrid = BTGrid.createFrom(grid);
 
@@ -350,7 +386,7 @@ describe("BTGrid.ts", () => {
             Right = roMe.right;
             Width = roMe.width || Right - Left;
             Height = roMe.height || Bottom - Top;
-            expect(btGrid.resizeCol(thirdCol, Left, Width + perWidth*2)).to.be.ok;
+            expect(btGrid.resizeCol(thirdCol, Left, Width + perWidth * 2)).to.be.ok;
             expect(btGrid.getCellSize(thirdCol)).to.be.equal(3);
             expect(btGrid.getCellSize(lastCol)).to.be.equal(1);
 
@@ -372,7 +408,7 @@ describe("BTGrid.ts", () => {
             Right = roMe.right;
             Width = roMe.width || Right - Left;
             Height = roMe.height || Bottom - Top;
-            expect(btGrid.resizeCol(thirdCol, Left, Width - perWidth*2)).to.be.ok;
+            expect(btGrid.resizeCol(thirdCol, Left, Width - perWidth * 2)).to.be.ok;
             expect(btGrid.getCellSize(thirdCol)).to.equal(1);
             expect(btGrid.getCellSize(lastCol)).to.equal(3);
         })

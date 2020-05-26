@@ -1,5 +1,4 @@
 import cellSizeMode from './cellSizeMode';
-import './util';
 import GridOption from './GridOption';
 import position from './position';
 /**
@@ -137,13 +136,15 @@ export default class BTGrid {
      */
     private addNewRow(contentEl: Element, rowIndex?: number): Element {
         const newRow = document.createElement('div');
-
         rowIndex = typeof rowIndex == 'undefined' ? this.rowCount : rowIndex;
         rowIndex = rowIndex < 0 ? 0 : rowIndex;
         // rowIndex = rowIndex >= this.rowCount ? this.rowCount - 1 : rowIndex;
 
         newRow.dataset.rowIndex = rowIndex.toString();
         newRow.className = this.option.rowClass;
+        if (!Object.isNull(this.option.customRowClass)) {
+            newRow.className = newRow.className + ' ' + this.option.customRowClass;
+        }
 
         this.addNewCel(contentEl, newRow);
         if (this.rowCount == 0 && rowIndex >= this.rowCount)
@@ -182,7 +183,7 @@ export default class BTGrid {
      * 获取全尺寸的样式
      */
     get FullSizeCellClass(): string {
-        return this.cellClassFormat.format(this.option.gridCellsCount.toString());
+        return this.cellClassFormat.format(this.option.gridSize.toString());
     }
     /**
      * 获取列的尺寸样式
@@ -329,7 +330,6 @@ export default class BTGrid {
         else
             theRow = ownRowOrIndex;
         const newCel = document.createElement('div');
-
         //宽度如果溢出，则调整大小
         if (this.autoCellSize(theRow, newCel, cellIndex, width)) {
             // newCel.appendChild(contentEl);
@@ -349,17 +349,18 @@ export default class BTGrid {
      * @param row 行
      * @param width 宽度
      */
-    private canAdd(row: Element, width?: number): boolean {
+    private canAdd(row: Element): boolean {
         const cellsCount = this.getCells(row, true).length;
         //超出了栅格列大小
-        if (cellsCount >= this.option.gridCellsCount)
+        if (cellsCount >= this.option.gridSize)
             return false;
 
         const remainSize = this.getRemainCellsSize(row, true);
         // const remainCellsCount = this.option.gridCellsCount - cellsCount;
 
         //如果宽度没有指定，且剩余大小大于0
-        if (this.option.CellSizeMode == cellSizeMode.None || (remainSize > 0 && Object.isNull(width)) || remainSize >= width) {
+        // if (this.option.CellSizeMode == cellSizeMode.None || (remainSize > 0 && Object.isNull(width)) || remainSize >= width) {
+        if (this.option.CellSizeMode == cellSizeMode.None) {
             if (remainSize <= 0)
                 return false;
         }
@@ -369,56 +370,75 @@ export default class BTGrid {
     /**
      * 如果可以插入，则返回true，否则返回false
      * @param row 行
-     * @param cell 列
-     * @param cellIndex 列索引
-     * @param width 宽度
+     * @param newCell 列
+     * @param newCellIndex 列索引
+     * @param newCellWidth 宽度
      */
-    private autoCellSize(row: Element, cell: Element, cellIndex: number, width?: number): boolean {
+    private autoCellSize(row: Element, newCell?: Element, newCellIndex?: number, newCellWidth?: number): boolean {
         const cellsCount = this.getCells(row).length;
         //超出了栅格列大小
-        if (!this.canAdd(row, width))
+        if (!this.canAdd(row))
             return false;
         const remainSize = this.getRemainCellsSize(row);
-        const remainCellsCount = this.option.gridCellsCount - cellsCount;
+        const remainCellsCount = this.option.gridSize - cellsCount;
         //如果宽度没有指定，且剩余大小大于0
-        if (this.option.CellSizeMode == cellSizeMode.None || (remainSize > 0 && Object.isNull(width)) || remainSize >= width)
-            return this.autoCellSizeOfNone(row, cell, remainSize, width);
+        if (this.option.CellSizeMode == cellSizeMode.None)
+            return this.autoCellSizeOfNone(row, newCell, remainSize, newCellWidth);
         else if (this.option.CellSizeMode == cellSizeMode.AutoShrink)
-            return this.autoCellSizeOfShrink(row, cell, cellIndex, remainSize, remainCellsCount, width);
+            return this.autoCellSizeOfShrink(row, newCell, newCellIndex, remainSize, remainCellsCount, newCellWidth);
         else
-            return this.autoCellSizeOfAverageShrink(row, cell, cellIndex, width);
+            return this.autoCellSizeOfAverageShrink(row, newCell, newCellWidth);
     }
 
-    autoCellSizeOfAverageShrink(row: Element, cell: Element, cellIndex: number, width?: number): boolean {
+    autoCellSizeOfAverageShrink(row: Element, newCell?: Element, newCellWidth?: number): boolean {
         const cells = this.getCells(row);
-        let cellsCount = cells.length;
-        const remainCellsCount = this.option.gridCellsCount - cellsCount;
-        let dueGridSize = this.option.gridCellsCount;
-        const noWidth = Object.isNull(width);
+        const oldCellsCount = cells.length;
+        /** 剩余列的数量 */
+        const remainCellsCount = this.option.gridSize - oldCellsCount;
+        const noNewCell = Object.isNull(newCell);
+        const noWidth = noNewCell || Object.isNull(newCellWidth);
+        const newCellsCount = noNewCell ? oldCellsCount : oldCellsCount + 1;
 
-        //如果未指明宽度，则将此列也均分。
-        if (noWidth)
-            cellsCount += 1;
+        /** 其他列的大小 */
+        let otherWidth: number;
+        let redundancyWidth: number;
+        if (noWidth) {
+            otherWidth = this.option.gridSize / newCellsCount;
+            redundancyWidth = otherWidth;
+            if (Number.isInteger(otherWidth))
+                newCellWidth = otherWidth;
+            else {
+                otherWidth = Math.round(otherWidth);
+                //未能整除，则将剩余大小给新列
+                newCellWidth = this.option.gridSize - (newCellsCount - 1) * otherWidth;
+                redundancyWidth = newCellWidth;
+            }
+        }
         else {
             //如果指明了宽度，总宽度-此列宽度，均分现有列。
-            width = width > remainCellsCount ? remainCellsCount : width;
-            dueGridSize -= width;
-        }
+            newCellWidth = newCellWidth > remainCellsCount ? remainCellsCount : newCellWidth;
+            const remainGridSize = this.option.gridSize - newCellWidth;
 
-        let perWidth = dueGridSize / cellsCount;
-        //为设置宽度，则平均获取宽度
-        if (noWidth)
-            width = Math.trunc(perWidth);
-        //未能整除，其余的宽度放入新列
-        if (!Number.isInteger(perWidth)) {
-            perWidth = Math.trunc(perWidth);
-            width = this.option.gridCellsCount - perWidth * cells.length;
+            //计算其他列的宽度
+            otherWidth = remainGridSize / (newCellsCount - 1);
+            redundancyWidth = otherWidth;
+            if (!Number.isInteger(otherWidth)) {
+                otherWidth = Math.round(otherWidth);
+                redundancyWidth = otherWidth;
+                //将多出的宽度给予新列
+                redundancyWidth += remainGridSize - otherWidth * (newCellsCount - 1);
+            }
         }
+        for (let index = 0; index < cells.length; index++) {
+            const theCel = cells[index];
+            if (cells.length - 1 == index)
+                this.addOrRemoveGridClass(theCel, this.GetCellClass(redundancyWidth));
+            else
+                this.addOrRemoveGridClass(theCel, this.GetCellClass(otherWidth));
+        }
+        if (!noNewCell)
+            this.addOrRemoveGridClass(newCell, this.GetCellClass(newCellWidth));
 
-        this.addOrRemoveGridClass(cell, this.GetCellClass(width));
-        cells.forEach(theCel => {
-            this.addOrRemoveGridClass(theCel, this.GetCellClass(perWidth));
-        });
         return true;
     }
     /**
@@ -492,6 +512,8 @@ export default class BTGrid {
     private autoCellSizeOfNone(row: Element, cell: Element, remainSize: number, width?: number): boolean {
         // if (remainSize == 0)
         //     return false;
+        if (Object.isNull(cell))
+            return true;
         width = Object.isNull(width) ? 1 : width;
         width = remainSize > width ? width : remainSize;
         cell.className = this.cellClassFormat.format(width.toString());
@@ -520,7 +542,7 @@ export default class BTGrid {
      */
     getRemainCellsSize(ownRowOrIndex: Element | number, excludeWillEmptyCell = false): number {
         const existSize = this.getExistCellsSize(ownRowOrIndex, excludeWillEmptyCell);
-        return this.option.gridCellsCount - existSize;
+        return this.option.gridSize - existSize;
     }
 
     /**
@@ -563,6 +585,9 @@ export default class BTGrid {
         parent.removeChild(cell);
         if (parent.childElementCount == 0)
             this.removeRow(parent);
+        else {
+            this.autoCellSize(parent);
+        }
     }
 
     /**
@@ -571,7 +596,7 @@ export default class BTGrid {
      * @param x X坐标更改
      * @param width 宽度
      */
-    resizeCol(col: Element, x: number, newWidth: number): boolean {
+    resizeCol(col: Element, x: number, newWidth?: number): boolean {
         const ro = col.getBoundingClientRect();
         const Left = ro.left;
         const Width = ro.width;
@@ -615,6 +640,7 @@ export default class BTGrid {
         }
         return false;
     }
+
     //#endregion
 
     //#region  colItem
@@ -733,16 +759,44 @@ export default class BTGrid {
     }
 
     /**
+     * 获取项
+     * @param rowIndex 行索引
+     * @param cellIndex 列索引
+     * @param colItemIndex 项索引
+     */
+    private getColItem(rowIndex: number, cellIndex: number, colItemIndex: number): Element {
+        const ownCell = this.getCellByIndex(rowIndex, cellIndex);
+        const colItems = Array.from(ownCell.children);
+        return colItems[colItemIndex];
+    }
+
+    /**
+     * 删除项
+     * @param rowIndex 行索引
+     * @param cellIndex 列索引
+     * @param colItemIndex 项索引
+     */
+    removeColItemByIndex(rowIndex: number, cellIndex: number, colItemIndex: number): boolean {
+        const colItem = this.getColItem(rowIndex, cellIndex, colItemIndex);
+        return this.removeColItem(colItem);
+    }
+    /**
      * 删除项
      * @param colItem 项
      */
-    removeColItem(colItem: Element): void {
+    private removeColItem(colItem: Element): boolean {
         const parent = colItem.parentElement;
         parent.removeChild(colItem);
         if (parent.childElementCount == 0)
             this.removeCel(parent);
+        return true;
     }
 
+    moveByIndex(rowIndex: number, colIndex: number, colItemIndex: number, x: number, y: number, finish = true): boolean {
+        const colItem = this.getColItem(rowIndex, colIndex, colItemIndex);
+        return this.move(colItem, x, y, finish);
+    }
+    private preDragTargetColItem: Element;
     /**
      * 移动colitem
      * @param colitem 项
@@ -754,29 +808,36 @@ export default class BTGrid {
         if (!colitem.classList.contains(this.option.movingClass)) {
             colitem.classList.add(this.option.movingClass);
         }
+
+        this.removeDragTargetClasses(this.preDragTargetColItem);
+
         const elements = this.target.ownerDocument.elementsFromPoint(x, y);
         const toColItem = this.filterFirstOrDefault(this.colItemSelector, ...elements);
         //自身
-        if (Object.isNull(toColItem) || toColItem == colitem)
+        if (Object.isNull(toColItem) || toColItem.isSameNode(colitem))
             return false;
         const width = this.getCellSize(colitem.parentElement);
-        const toRow = this.filterFirstOrDefault(this.rowSelector, ...elements);
-        const toCell = this.filterFirstOrDefault(this.cellSelector, ...elements);
-        let toCellIndex = Array.from(toRow.children).indexOf(toCell);
-        let toColItemIndex = Array.from(toCell.children).indexOf(toColItem);
+        // const toRow = this.filterFirstOrDefault(this.rowSelector, ...elements);
+        // const toCell = this.filterFirstOrDefault(this.cellSelector, ...elements);
+        const toRow = toColItem.getColsetParent(this.rowSelector);
+        const toCell = toColItem.getColsetParent(this.cellSelector);
+        let toCellIndex = toCell.indexOfParent();
+        let toColItemIndex = toColItem.indexOfParent();
 
         //获取需要放入的位置
         const p = this.positionOf(toColItem, x, y);
         let canDrop = true;
         //判断是否可以插入.上下两个位置不需要判断
         if (p == position.left || p == position.right) {
-            canDrop = this.canAdd(toRow, width);
+            canDrop = this.canAdd(toRow);
         }
 
+        this.preDragTargetColItem = toColItem;
         //可以放下
         if (canDrop) {
             if (finish) {
                 colitem.classList.remove(this.option.movingClass);
+
                 this.removeColItem(colitem);
                 if (p == position.left || p == position.right) {
                     toCellIndex += (p == position.right ? 1 : 0);
@@ -787,12 +848,33 @@ export default class BTGrid {
                     return !Object.isNull(this.addColItem(colitem, toRow, toCell, toColItemIndex));
                 }
             }
+            else
+                toColItem.classList.add(this.option.moveTargetClass, position[p]);
             return true;
         }
-        else
+        else {
+            if (finish)
+                colitem.classList.remove(this.option.movingClass);
             return false;
+        }
     }
 
+    private removeDragTargetClasses(toColItem: Element): void {
+        if (Object.isNull(toColItem))
+            return;
+        toColItem.classList.remove(this.option.moveTargetClass);
+        for (const enumMember in position) {
+            const isValueProperty = parseInt(enumMember, 10) >= 0;
+            if (isValueProperty) {
+                toColItem.classList.remove(position[enumMember]);
+            }
+        }
+    }
+
+    resizeColItemByIndex(rowIndex: number, colIndex: number, colItemIndex: number, height: number): boolean {
+        const colItem = this.getColItem(rowIndex, colIndex, colItemIndex);
+        return this.resizeColItem(colItem, height);
+    }
     /**
      * 改变 项 的大小。只能改变高度。宽度由列的宽度决定
      * @param colItem 项
@@ -879,6 +961,7 @@ export default class BTGrid {
     //     return ro;
     // }
 
+    private static instances: { key: Element; value: BTGrid }[] = [];
     //#endregion
     /**
      * 创建BTGrid
@@ -894,15 +977,24 @@ export default class BTGrid {
      */
     static createFrom(element: Element, option?: GridOption): BTGrid;
     static createFrom(elementOrSelector: Element | string, option?: GridOption): BTGrid {
-        let targets: Element;
+        let target: Element;
         if (typeof elementOrSelector == 'string')
-            targets = document.querySelector(elementOrSelector);
+            target = document.querySelector(elementOrSelector);
         else
-            targets = elementOrSelector;
+            target = elementOrSelector;
 
-        if (!Object.isNull(targets)) {
-            const instances: BTGrid = new BTGrid(targets, option);
-            return instances;
+        const existInstance = this.instances.find((value: { key: Element; value: BTGrid }) => {
+            if (value.key.isSameNode(target)) {
+                return value.value;
+            }
+        });
+
+        if (!Object.isNull(existInstance))
+            return existInstance.value;
+        if (!Object.isNull(target)) {
+            const instance: BTGrid = new BTGrid(target, option);
+            this.instances.push({ key: target, value: instance });
+            return instance;
         }
     }
 }

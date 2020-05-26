@@ -48,8 +48,7 @@ function getCompiler(opt) {
     }
 
     opt = opt || {
-        tsconfigOverride: { compilerOptions : { module: 'ES2015' } },
-        useTsconfigDeclarationDir:true
+        tsconfigOverride: { compilerOptions : { module: 'ES2015' } }
     }
 
     return typescript(opt);
